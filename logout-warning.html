@@ -3,9 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Sesi Aktif Ditemukan</title>
+    <link rel="stylesheet" href="css/index.css">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.7.16/dist/vue.js"></script>
+    <style>
+        .warning-box { text-align: center; padding: 20px; }
+        .btn-group { display: flex; gap: 15px; margin-top: 25px; justify-content: center; }
+        .btn-secondary { background: #6c757d; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
+    </style>
 </head>
 <body>
-    <h2>Akses Ditolak. silahkan logout melalui tombol yang disediakan terlebih dahulu</h2>
+    <div id="app" class="login" v-cloak>
+        <div class="form-box warning-box">
+            <h1 class="form-title">Sesi Aktif</h1>
+            <p class="form-sub">Anda mendeteksi adanya login aktif menggunakan akun <strong>{{ userName }}</strong>.</p>
+            <p class="form-sub">Apakah anda ingin masuk ke Dashboard atau keluar dari akun saat ini?</p>
+
+            <div class="btn-group">
+                <button class="btn-secondary" @click="goToDashboard">Ke Dashboard</button>
+                <button class="btn-login" style="margin: 0;" @click="forceLogout">Log Out</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                userName: 'User'
+            },
+            created() {
+                const rawUserData = sessionStorage.getItem('userData');
+                if (rawUserData) {
+                    const parsed = JSON.parse(rawUserData);
+                    this.userName = parsed.nama || 'User';
+                }
+            },
+            methods: {
+                goToDashboard() {
+                    window.location.href = 'dashboard.html';
+                },
+                forceLogout() {
+                    sessionStorage.clear();
+                    window.location.href = 'index.html';
+                }
+            }
+        });
+    </script>
 </body>
 </html>

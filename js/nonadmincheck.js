@@ -1,5 +1,7 @@
-loginStatus = sessionStorage.getItem('userId');
-userRole = sessionStorage.getItem('userRole');
-if (!loginStatus || userRole != "UPBJJ-UT") {
-    window.location.href = 'denied.html';
-}
+// Keep as a lightweight, instant script
+(function() {
+    const userRole = sessionStorage.getItem('userRole');
+    if (userRole !== 'UPBJJ-UT') {
+        window.location.href = 'denied.html';
+    }
+})();

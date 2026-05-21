@@ -1,60 +1,70 @@
-function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 3000);
-  }
+new Vue({
+    el: '#app',
+    data: {
+        email: '',
+        password: '',
+        isLoading: false,
+        errors: {
+            email: false,
+            password: false,
+            emailMsg: 'Tolong masukkan email yang valid',
+            passwordMsg: 'Password salah'
+        },
+        toast: {
+            show: false,
+            message: ''
+        }
+    },
+    methods: {
+        showToast(msg) {
+            this.toast.message = msg;
+            this.toast.show = true;
+            setTimeout(() => {
+                this.toast.show = false;
+            }, 3000);
+        },
+        validate() {
+            let isValid = true;
+            const emailRx = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-function validate() {
-    const email = document.getElementById('email');
-    const pass = document.getElementById('password');
-    const emailErr = document.getElementById('email-err');
-    const passErr = document.getElementById('pass-err');
-    let ok = true;
+            // Reset Error States
+            this.errors.email = false;
+            this.errors.password = false;
+            this.errors.emailMsg = 'Tolong masukkan email yang valid';
 
-    const emailRx = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRx.test(email.value.trim())) {
-        email.classList.add('error-input');
-        emailErr.style.display = 'block';
-        ok = false;
-    } else {
-        email.classList.remove('error-input');
-        emailErr.style.display = 'none';
+            // Email Validation
+            if (!emailRx.test(this.email)) {
+                this.errors.email = true;
+                isValid = false;
+            }
+
+            // Password Validation
+            if (this.password.length < 6) {
+                this.errors.password = true;
+                isValid = false;
+            }
+
+            // Authentication Check via data.js global function
+            if (isValid && !checkAuth(this.email, this.password)) {
+                this.errors.email = true;
+                this.errors.password = true;
+                this.errors.emailMsg = 'Email atau password salah';
+                isValid = false;
+            }
+
+            return isValid;
+        },
+        handleLogin() {
+            if (!this.validate()) return;
+
+            this.isLoading = true;
+            
+            // Simulating API Latency match to your native code
+            setTimeout(() => {
+                this.isLoading = false;
+                this.showToast('✓ Logged in successfully');
+                window.location.href = 'dashboard.html';
+            }, 400);
+        }
     }
-
-    if (pass.value.length < 6) {
-        pass.classList.add('error-input');
-        passErr.style.display = 'block';
-        ok = false;
-    } else {
-        pass.classList.remove('error-input');
-        passErr.style.display = 'none';
-    }
-
-    if (ok && !checkAuth(email.value.trim(), pass.value)) {
-        email.classList.add('error-input');
-        pass.classList.add('error-input');
-        emailErr.textContent = 'Email atau password salah';
-        emailErr.style.display = 'block';
-        ok = false;
-    }
-
-    return ok;
-}
-
-function handleLogin() {
-    if (!validate()) return;
-    const btn = document.getElementById('loginBtn');
-    btn.classList.add('loading');
-    btn.textContent = 'Signing in…';
-    setTimeout(function() {
-        btn.classList.remove('loading');
-        btn.textContent = 'Sign In';
-        showToast('✓ Logged in successfully');
-        window.location.href = 'dashboard.html';
-    }, 400);
-}
-
-document.addEventListener('keydown', e => {
-    if (e.key === 'Enter') handleLogin();
 });

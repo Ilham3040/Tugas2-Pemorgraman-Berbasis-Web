@@ -3,124 +3,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pemesanan Bahan Ajar</title>
+    <title>Pemesanan</title>
     <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/dashboard.css">
     <link rel="stylesheet" href="css/order.css">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.7.16/dist/vue.js"></script>
 </head>
 <body>
+    <script src="js/logincheck.js"></script>
     <script src="js/nonadmincheck.js"></script>
-    <!-- Mobile overlay -->
-    <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
 
-    <!-- Sidebar -->
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <span class="brand">MyUT<span class="dot">.</span></span>
-            <button class="close-btn" onclick="closeSidebar()">✕</button>
-        </div>
+    <div id="app" v-cloak>
+        <div class="overlay" :class="{ 'active': isSidebarOpen }" @click="closeSidebar"></div>
 
-        <nav class="nav">
-            <a href="dashboard.html" class="nav-item">
-                <span>Dashboard</span>
-            </a>
-            <a href="order.html" class="nav-item active">
-                <span>Pemesanan Bahan Ajar</span>
-            </a>
-            <a href="#" class="nav-item">
-                <span>Pengaturan</span>
-            </a>
-        </nav>
-
-        <div class="sidebar-footer">
-            <a id="logout" href="#" class="nav-item logout">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-                <span>Keluar</span>
-            </a>
-        </div>
-    </aside>
-
-    <!-- Main content -->
-    <main class="main" id="main">
-        <header class="topbar">
-            <button class="hamburger" onclick="openSidebar()">
-                <span></span><span></span><span></span>
-            </button>
-            <span class="page-label">Pemesanan Bahan Ajar</span>
-        </header>
-
-        <div class="content">
-            <div class="dashboard-title">
-                <h1>Pemesanan Bahan Ajar</h1>
-                <button id="open-order">Buat pemesanan baru</button>
+        <aside class="sidebar" :class="{ 'open': isSidebarOpen }">
+            <div class="sidebar-header">
+                <span class="brand">MyUT<span class="dot">.</span></span>
+                <button class="close-btn" @click="closeSidebar">✕</button>
             </div>
-
-            <div id="userTracking">
+            <nav class="nav">
+                <a href="dashboard.html" class="nav-item"><span>Dashboard</span></a>
+                <a href="order.html" class="nav-item active"><span>Pemesanan Bahan Ajar</span></a>
+                <a href="#" class="nav-item"><span>Pengaturan</span></a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="#" class="nav-item logout" @click.prevent="handleLogout">
+                    <span>Keluar</span>
+                </a>
             </div>
+        </aside>
 
-           
+        <main class="main">
+            <header class="topbar">
+                <button class="hamburger" @click="openSidebar">
+                    <span></span><span></span><span></span>
+                </button>
+                <span class="page-label">Pemesanan Bahan Ajar</span>
+            </header>
 
-            <div class="popup">
-                <div class="book-order">
-                    <h2>Daftar Bahan Ajar</h2>
-                    <ul id="book-list">
-                        <li>
-                            <img src="assets/books/pengantar_komunikasi.jpg">
-                            <div class="book-info">
-                                <p>Pengantar Ilmu Komunikasi</p>
-                                <p>ASIP4301</p>
-                                <p>Edisi 2</p>
-                                <p>Stock : 548</p>
-                                <button class="order-btn">Order</button>
-                            </div>
-                        </li>
-                        <li>
-                            <img src="assets/books/manajemen_keuangan.jpg">
-                            <div class="book-info">
-                                <p>Manajemen Keuangan</p>
-                                <p>EKMA4216</p>
-                                <p>Edisi 3</p>
-                                <p>Stock : 392</p>
-                                <button class="order-btn">Order</button>
-                            </div>
-                        </li>
-                        <li>
-                            <img src="assets/books/kepemimpinan.jpg">
-                            <div class="book-info">
-                                <p>Kepemimpinan</p>
-                                <p>EKMA4310</p>
-                                <p>Edisi 1</p>
-                                <p>Stock : 278</p>
-                                <button class="order-btn">Order</button>
-                            </div>
-                        </li>
-                        <li>
-                            <img src="assets/books/mikrobiologi.jpg">
-                            <div class="book-info">
-                                <p>Mikrobiologi Dasar</p>
-                                <p>BIOL4211</p>
-                                <p>Edisi 2</p>
-                                <p>Stock : 165</p>
-                                <button class="order-btn">Order</button>
-                            </div>
-                        </li>
-                        <li>
-                            <img src="assets/books/paud_perkembangan.jpeg">
-                            <div class="book-info">
-                                <p>Perkembangan Anak Usia Dini</p>
-                                <p>PAUD4401</p>
-                                <p>Edisi 4</p>
-                                <p>Stock : 204</p>
-                                <button class="order-btn">Order</button>
-                            </div>
-                        </li>
-                    </ul>
+            <div class="content">
+                <h1 class="dashboard-title">Formulir Pemesanan</h1>
+
+                <div class="form-order">
+                    <div class="field">
+                        <label for="book-select">Pilih Bahan Ajar</label>
+                        <select id="book-select" v-model="selectedBookIdx" @change="handleBookSelection">
+                            <option value="" disabled selected>-- Pilih Buku --</option>
+                            <option v-for="(book, index) in localBooks" :key="book.kodeBarang" :value="index">
+                                {{ book.kodeBarang }} - {{ book.namaBarang }} (Sisa: {{ book.stok }})
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="book-details" v-if="selectedBook">
+                        <div class="detail-row"><span>Kode:</span> <strong>{{ selectedBook.kodeBarang }}</strong></div>
+                        <div class="detail-row"><span>Nama:</span> {{ selectedBook.namaBarang }}</div>
+                        <div class="detail-row"><span>Edisi:</span> {{ selectedBook.edisi }}</div>
+                        <div class="detail-row"><span>Jenis:</span> {{ selectedBook.jenisBarang }}</div>
+                        <div class="detail-row"><span>Stok Tersedia:</span> {{ selectedBook.stok }} Pcs</div>
+                    </div>
+
+                    <div class="field">
+                        <label for="jumlah">Jumlah Pesanan</label>
+                        <input type="number" id="jumlah" min="1" v-model.number="orderQuantity" :disabled="!selectedBook">
+                        <div class="error-msg" v-if="qtyError" style="display: block;">{{ qtyErrorMsg }}</div>
+                    </div>
+
+                    <button class="btn-order" :disabled="!selectedBook || orderQuantity <= 0" @click="submitOrder">
+                        Kirim Pesanan
+                    </button>
                 </div>
             </div>
+        </main>
+
+        <div class="modal-overlay" :class="{ 'active': isModalActive }">
+            <div class="modal">
+                <div class="modal-icon">✓</div>
+                <h2>Pesanan Berhasil!</h2>
+                <p>Pesanan bahan ajar anda telah berhasil dikirim ke UT Pusat.</p>
+                <button class="btn-modal-close" @click="closeModal">Selesai</button>
+            </div>
         </div>
-    </main>
+    </div>
+
+    <style>[v-cloak] { display: none; }</style>
 
     <script src="js/data.js"></script>
     <script src="js/order.js"></script>
-
 </body>
 </html>

@@ -1,50 +1,47 @@
-const sidebar = document.getElementById('sidebar');
-const overlay = document.getElementById('overlay');
-const adminMenu = document.querySelector('#admin');
-const nonAdminMenu = document.querySelector('#nonadmin');
-const logoutButton = document.querySelector('#logout')
+new Vue({
+    el: '#app',
+    data: {
+        isSidebarOpen: false,
+        userId: null,
+        userRole: '',
+        userData: null,
+        availableBooks: []
+    },
+    created() {
+        // Hydrate data attributes safely out of sessionStorage during initialization lifecycle
+        this.userId = sessionStorage.getItem('userId');
+        this.userRole = sessionStorage.getItem('userRole');
+        
+        const rawUserData = sessionStorage.getItem('userData');
+        if (rawUserData) {
+            this.userData = JSON.parse(rawUserData);
+        }
 
-userId   = sessionStorage.getItem('userId');
-userRole = sessionStorage.getItem('userRole');
-userData = JSON.parse(sessionStorage.getItem('userData'));
+        const rawBooks = sessionStorage.getItem('books');
+        if (rawBooks) {
+            this.availableBooks = JSON.parse(rawBooks);
+        }
 
-console.log('session:', userId, userRole, userData.nama);
-
-
-if (userRole == "UPBJJ-UT") {
-    adminMenu.classList.add('hidden')
-} else {
-    nonAdminMenu.classList.add('hidden')
-}
-
-const userIdentity = document.querySelector('#identity');
-
-
-userIdentity.innerHTML = `
-    <h3>${userData.nama}</h3>
-    <h3>${userData.role}</h3>
-    <h3>${userData.lokasi}</h3>
-    `;
-
-
-
-
-function openSidebar() {
-    sidebar.classList.add('open');
-    overlay.classList.add('active');
-    document.body.style.overflow = 'hidden';
-}
-
-function closeSidebar() {
-    sidebar.classList.remove('open');
-    overlay.classList.remove('active');
-    document.body.style.overflow = '';
-}
-
-
-logoutButton.addEventListener('click', function () {
-    userId = userRole = userName = null;
-    sessionStorage.clear();
-    window.location.href = 'index.html';
-})
-
+        console.log('Vue Dashboard Session Loaded:', this.userId, this.userRole, this.userData?.nama);
+    },
+    methods: {
+        openSidebar() {
+            this.isSidebarOpen = true;
+            document.body.style.overflow = 'hidden';
+        },
+        closeSidebar() {
+            this.isSidebarOpen = false;
+            document.body.style.overflow = '';
+        },
+        handleLogout() {
+            // Clear down states
+            this.userId = null;
+            this.userRole = '';
+            this.userData = null;
+            
+            // Wipe Storage Engine and Route out
+            sessionStorage.clear();
+            window.location.href = 'index.html';
+        }
+    }
+});
