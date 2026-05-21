@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="css/index.css">
+</head>
+<body>
+    <script>
+        loginStatus = sessionStorage.getItem('userId');
+        if (loginStatus) {
+            window.location.href = 'logout-warning.html'
+        }
+    </script>
+    <div class="login">
+    <div class="form-box">
+        <h1 class="form-title">Selamat Datang</h1>
+        <p class="form-sub">Lakukan login otentikasi untuk masuk ke akun anda</p>
+
+        <div class="field">
+        <label for="email">Email</label>
+        <input type="email" id="email" placeholder="akun@ut.ac.id" autocomplete="email">
+        <div class="error-msg" id="email-err">Tolong masukkan email yang valid</div>
+        </div>
+
+        <div class="field">
+        <label for="password">Password</label>
+        <input type="password" id="password" autocomplete="current-password">
+        <div class="error-msg" id="pass-err">Password salah</div>
+        </div>
+
+        <a href="forgot.html" class="forgot">Lupa password?</a>
+
+        <button class="btn-login" id="loginBtn" onclick="handleLogin()">Masuk</button>
+    </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="js/data.js"></script>
+    <script src="js/index.js"></script>
+
+</body>
+</html>
