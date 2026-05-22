@@ -13,16 +13,6 @@ new Vue({
         qtyErrorMsg: ''
     },
 
-    computed: {
-        isOrderValid() {
-            return (
-                this.selectedBook !== null &&
-                this.orderQuantity > 0 &&
-                this.orderQuantity <= this.selectedBook.stok
-            );
-        }
-    },
-
     watch: {
         localBooks: {
             handler(newBooksValue) {
@@ -32,20 +22,34 @@ new Vue({
                 localStorage.setItem('books', JSON.stringify(newBooksValue));
             },
             deep: true
+        },
+        userTracking: {
+            handler(newUserTrackingValue) {
+                console.log('Ada perubahan pada data tracking user! Memperbarui localStorage...');
+                
+                const rawTracking = localStorage.getItem('tracking');
+                if (!rawTracking) return;
+
+                const allUsersTracking = JSON.parse(rawTracking);
+                const currentUserId = Number(sessionStorage.getItem('userId'));
+
+                const userIdx = allUsersTracking.findIndex(u => u.userId === currentUserId);
+
+                if (userIdx !== -1) {
+                    allUsersTracking[userIdx].datas = newUserTrackingValue;
+
+                    localStorage.setItem('tracking', JSON.stringify(allUsersTracking));
+                }
+            },
+            deep: true
         }
     },
     created() {
 
         this.loadBooksLocally();
 
+        this.loadTrackingLocally();
 
-        const rawTracking = sessionStorage.getItem('userTracking');
-        if (rawTracking) {
-            this.userTracking = JSON.parse(rawTracking);
-        } else if (typeof dataTracking !== 'undefined') {
-            this.userTracking = dataTracking;
-            sessionStorage.setItem('userTracking', JSON.stringify(dataTracking));
-        }
     },
 
     methods: {
@@ -144,6 +148,24 @@ new Vue({
                     };
                 });
                 localStorage.setItem('books', JSON.stringify(this.localBooks));
+            }
+        },
+
+        loadTrackingLocally() {
+            const rawTracking = localStorage.getItem('tracking');
+            
+            if (rawTracking) {
+                const dataTracking = JSON.parse(rawTracking);
+                
+                const currentUserId = Number(sessionStorage.getItem('userId'));
+                const activeUser = dataTracking.find(u => u.userId === currentUserId);
+                
+                this.userTracking = activeUser ? activeUser.datas : [];
+                
+                console.log(this.userTracking);
+            } else if (typeof dataTracking !== 'undefined') {
+                this.userTracking = dataTracking; // Catatan: Baris ini mengambil seluruh data dummy awal
+                localStorage.setItem('tracking', JSON.stringify(dataTracking));
             }
         }
     }

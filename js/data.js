@@ -1,10 +1,10 @@
 
 const dataPengguna = {
-  1: { userId: 1, nama: "Rina Wulandari", email: "rina@ut.ac.id",   password: "rina123",   role: "UPBJJ-UT",      lokasi: "UPBJJ Jakarta"  },
-  2: { userId: 2, nama: "Agus Pranoto",   email: "agus@ut.ac.id",   password: "agus123",   role: "UPBJJ-UT",      lokasi: "UPBJJ Makassar" },
-  3: { userId: 3, nama: "Siti Marlina",   email: "siti@ut.ac.id",   password: "siti123",   role: "Puslaba",       lokasi: "Pusat"          },
-  4: { userId: 4, nama: "Doni Setiawan",  email: "doni@ut.ac.id",   password: "doni123",   role: "Fakultas",      lokasi: "FISIP"          },
-  5: { userId: 5, nama: "Admin SITTA",    email: "admin@ut.ac.id",  password: "admin123",  role: "Administrator", lokasi: "Pusat"          },
+  1: { userId: 1, nama: "Rina Wulandari", email: "rina@ut.ac.id",   role: "UPBJJ-UT",      lokasi: "UPBJJ Jakarta"  },
+  2: { userId: 2, nama: "Agus Pranoto",   email: "agus@ut.ac.id",   role: "UPBJJ-UT",      lokasi: "UPBJJ Makassar" },
+  3: { userId: 3, nama: "Siti Marlina",   email: "siti@ut.ac.id",   role: "Puslaba",       lokasi: "Pusat"          },
+  4: { userId: 4, nama: "Doni Setiawan",  email: "doni@ut.ac.id",   role: "Fakultas",      lokasi: "FISIP"          },
+  5: { userId: 5, nama: "Admin SITTA",    email: "admin@ut.ac.id",  role: "Administrator", lokasi: "Pusat"          },
 };
 
 const loginData = {
@@ -74,6 +74,12 @@ if (!localStorage.getItem('books') && typeof dataBahanAjar !== 'undefined') {
     localStorage.setItem('books', JSON.stringify(dataBahanAjar));
 }
 
+
+if (!localStorage.getItem('tracking') && typeof dataTracking !== 'undefined') {
+    localStorage.setItem('tracking', JSON.stringify(dataTracking));
+}
+
+
 const getUserById = id => dataPengguna[id];
 
 function getTrackingByUserId(userId) {
@@ -85,12 +91,9 @@ function checkAuth(email, password) {
   const data = loginData[email];
   if (!data || data.password !== password) return false;
 
-  console.log(getTrackingByUserId(data.userId))
-
   sessionStorage.setItem('userId',       data.userId);
   sessionStorage.setItem('userRole',     data.role);
   sessionStorage.setItem('userData',     JSON.stringify(getUserById(data.userId)));
-  sessionStorage.setItem('userTracking', JSON.stringify(getTrackingByUserId(data.userId)));
 
   return true;
 }
