@@ -4,42 +4,45 @@ new Vue({
         isSidebarOpen: false,
         userId: null,
         userRole: '',
-        userData: null,
-        availableBooks: []
+        userData: null
     },
+
+    // computed: builds reactive derived strings from data
+    computed: {
+        greetingHtml() {
+            if (!this.userData) return '';
+            return `Selamat datang, <strong>${this.userData.nama}</strong>!`;
+        },
+        brandHtml() {
+            return 'MyUT<span class="dot">.</span>';
+        }
+    },
+
+    // watch: reacts to sidebar state changes — keeps side-effect out of methods
+    watch: {
+        isSidebarOpen(isOpen) {
+            document.body.style.overflow = isOpen ? 'hidden' : '';
+        },
+        // watch: logs session user changes (useful for debugging / future audit trail)
+        userId(val) {
+            console.log('Active session userId changed:', val);
+        }
+    },
+
     created() {
-        // Hydrate data attributes safely out of sessionStorage during initialization lifecycle
-        this.userId = sessionStorage.getItem('userId');
+        this.userId   = sessionStorage.getItem('userId');
         this.userRole = sessionStorage.getItem('userRole');
-        
-        const rawUserData = sessionStorage.getItem('userData');
-        if (rawUserData) {
-            this.userData = JSON.parse(rawUserData);
-        }
-
-        const rawBooks = sessionStorage.getItem('books');
-        if (rawBooks) {
-            this.availableBooks = JSON.parse(rawBooks);
-        }
-
-        console.log('Vue Dashboard Session Loaded:', this.userId, this.userRole, this.userData?.nama);
+        const raw     = sessionStorage.getItem('userData');
+        if (raw) this.userData = JSON.parse(raw);
     },
+
     methods: {
-        openSidebar() {
-            this.isSidebarOpen = true;
-            document.body.style.overflow = 'hidden';
-        },
-        closeSidebar() {
-            this.isSidebarOpen = false;
-            document.body.style.overflow = '';
-        },
+        openSidebar()  { this.isSidebarOpen = true;  },
+        closeSidebar() { this.isSidebarOpen = false; },
         handleLogout() {
-            // Clear down states
-            this.userId = null;
+            this.userId   = null;
             this.userRole = '';
             this.userData = null;
-            
-            // Wipe Storage Engine and Route out
             sessionStorage.clear();
             window.location.href = 'index.html';
         }

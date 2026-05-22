@@ -9,9 +9,7 @@
 </head>
 <body>
     <script>
-        if (sessionStorage.getItem('userId')) {
-            window.location.href = 'logout-warning.html';
-        }
+        if (sessionStorage.getItem('userId')) window.location.href = 'logout-warning.html';
     </script>
 
     <div id="app" class="login" v-cloak>
@@ -21,37 +19,38 @@
 
             <div class="field">
                 <label for="email">Email</label>
-                <input type="email" id="email" placeholder="akun@ut.ac.id" 
-                       v-model.trim="email" 
-                       :class="{'error-input': errors.email}">
-                <div class="error-msg" v-if="errors.email" style="display: block;">
-                    {{ errors.emailMsg }}
-                </div>
+                <input type="email" id="email" placeholder="akun@ut.ac.id"
+                       v-model.trim="email"
+                       :class="{ 'error-input': errors.email }">
+                <!-- v-show: error toggled frequently, element stays in DOM -->
+                <div class="error-msg" v-show="errors.email" v-text="errors.emailMsg"></div>
             </div>
 
             <div class="field">
                 <label for="password">Password</label>
-                <input type="password" id="password" 
-                       v-model="password" 
-                       :class="{'error-input': errors.password}"
+                <input type="password" id="password"
+                       v-model="password"
+                       :class="{ 'error-input': errors.password }"
                        @keyup.enter="handleLogin">
-                <div class="error-msg" v-if="errors.password" style="display: block;">
-                    {{ errors.passwordMsg }}
-                </div>
+                <div class="error-msg" v-show="errors.password" v-text="errors.passwordMsg"></div>
             </div>
 
             <a href="forgot.html" class="forgot">Lupa password?</a>
 
-            <button class="btn-login" :class="{ 'loading': isLoading }" @click="handleLogin">
-                {{ isLoading ? 'Signing in…' : 'Masuk' }}
+            <!-- v-text replaces mustache for button label -->
+            <button class="btn-login"
+                    :class="{ 'loading': isLoading }"
+                    :disabled="!isFormReady"
+                    @click="handleLogin">
+                <span v-text="isLoading ? 'Signing in…' : 'Masuk'"></span>
             </button>
         </div>
 
-        <div class="toast" :class="{ 'show': toast.show }">{{ toast.message }}</div>
+        <!-- v-show: toast is toggled on/off, no need to destroy DOM node -->
+        <div class="toast" v-show="toast.show" v-text="toast.message"></div>
     </div>
 
     <style>[v-cloak] { display: none; }</style>
-
     <script src="js/data.js"></script>
     <script src="js/index.js"></script>
 </body>

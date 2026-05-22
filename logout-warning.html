@@ -4,13 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sesi Aktif Ditemukan</title>
-    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="css/logout-warning.css">
     <script src="https://cdn.jsdelivr.net/npm/vue@2.7.16/dist/vue.js"></script>
-    <style>
-        .warning-box { text-align: center; padding: 20px; }
-        .btn-group { display: flex; gap: 15px; margin-top: 25px; justify-content: center; }
-        .btn-secondary { background: #6c757d; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
-    </style>
 </head>
 <body>
     <div id="app" class="login" v-cloak>
@@ -20,35 +15,12 @@
             <p class="form-sub">Apakah anda ingin masuk ke Dashboard atau keluar dari akun saat ini?</p>
 
             <div class="btn-group">
-                <button class="btn-secondary" @click="goToDashboard">Ke Dashboard</button>
-                <button class="btn-login" style="margin: 0;" @click="forceLogout">Log Out</button>
+                <button class="btn-secondary" @click="goToDashboard">Kembali ke Dashboard</button>
+                <button class="btn-logout" @click="forceLogout">Log Out</button>
             </div>
         </div>
     </div>
 
-    <script>
-        new Vue({
-            el: '#app',
-            data: {
-                userName: 'User'
-            },
-            created() {
-                const rawUserData = sessionStorage.getItem('userData');
-                if (rawUserData) {
-                    const parsed = JSON.parse(rawUserData);
-                    this.userName = parsed.nama || 'User';
-                }
-            },
-            methods: {
-                goToDashboard() {
-                    window.location.href = 'dashboard.html';
-                },
-                forceLogout() {
-                    sessionStorage.clear();
-                    window.location.href = 'index.html';
-                }
-            }
-        });
-    </script>
+    <script src="js/logout-warning.js"></script>
 </body>
 </html>

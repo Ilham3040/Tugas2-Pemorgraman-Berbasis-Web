@@ -47,29 +47,36 @@
                 <div class="form-order">
                     <div class="field">
                         <label for="book-select">Pilih Bahan Ajar</label>
-                        <select id="book-select" v-model="selectedBookIdx" @change="handleBookSelection">
-                            <option value="" disabled selected>-- Pilih Buku --</option>
-                            <option v-for="(book, index) in localBooks" :key="book.kodeBarang" :value="index">
+                        <!-- @change removed — watcher on selectedBookIdx handles selection -->
+                        <select id="book-select" v-model="selectedBookIdx">
+                            <option value="" disabled>-- Pilih Buku --</option>
+                            <option v-for="(book, index) in localBooks"
+                                    :key="book.kodeBarang"
+                                    :value="index">
                                 {{ book.kodeBarang }} - {{ book.namaBarang }} (Sisa: {{ book.stok }})
                             </option>
                         </select>
                     </div>
 
                     <div class="book-details" v-if="selectedBook">
-                        <div class="detail-row"><span>Kode:</span> <strong>{{ selectedBook.kodeBarang }}</strong></div>
-                        <div class="detail-row"><span>Nama:</span> {{ selectedBook.namaBarang }}</div>
-                        <div class="detail-row"><span>Edisi:</span> {{ selectedBook.edisi }}</div>
-                        <div class="detail-row"><span>Jenis:</span> {{ selectedBook.jenisBarang }}</div>
+                        <div class="detail-row"><span>Kode:</span> <strong v-text="selectedBook.kodeBarang"></strong></div>
+                        <div class="detail-row"><span>Nama:</span>  <span v-text="selectedBook.namaBarang"></span></div>
+                        <div class="detail-row"><span>Edisi:</span> <span v-text="selectedBook.edisi"></span></div>
+                        <div class="detail-row"><span>Jenis:</span> <span v-text="selectedBook.jenisBarang"></span></div>
                         <div class="detail-row"><span>Stok Tersedia:</span> {{ selectedBook.stok }} Pcs</div>
                     </div>
 
                     <div class="field">
                         <label for="jumlah">Jumlah Pesanan</label>
-                        <input type="number" id="jumlah" min="1" v-model.number="orderQuantity" :disabled="!selectedBook">
-                        <div class="error-msg" v-if="qtyError" style="display: block;">{{ qtyErrorMsg }}</div>
+                        <input type="number" id="jumlah" min="1"
+                               v-model.number="orderQuantity"
+                               :disabled="!selectedBook">
+                        <!-- v-show: error message toggled frequently, keep in DOM -->
+                        <div class="error-msg" v-show="qtyError" v-text="qtyErrorMsg"></div>
                     </div>
 
-                    <button class="btn-order" :disabled="!selectedBook || orderQuantity <= 0" @click="submitOrder">
+                    <!-- computed isOrderValid drives the disabled state -->
+                    <button class="btn-order" :disabled="!isOrderValid" @click="submitOrder">
                         Kirim Pesanan
                     </button>
                 </div>
@@ -87,7 +94,6 @@
     </div>
 
     <style>[v-cloak] { display: none; }</style>
-
     <script src="js/data.js"></script>
     <script src="js/order.js"></script>
 </body>

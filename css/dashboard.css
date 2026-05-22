@@ -173,7 +173,9 @@ body {
 
 .profile {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 20px;
 }
 
 .profile-picture {
@@ -190,11 +192,14 @@ body {
 }
 
 .profile .identity {
-    margin-left: 30px;
     display: flex;
     gap: 10px;
     flex-direction: column;
     margin-top: 0;
+}
+
+.profile .greeting {
+    margin-bottom: 10px;
 }
 
 

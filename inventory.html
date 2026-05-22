@@ -21,19 +21,11 @@
                 <span class="brand">MyUT<span class="dot">.</span></span>
                 <button class="close-btn" @click="closeSidebar">✕</button>
             </div>
-
             <nav class="nav">
-                <a href="dashboard.html" class="nav-item">
-                    <span>Dashboard</span>
-                </a>
-                <a href="inventory.html" class="nav-item active">
-                    <span>Inventory Bahan Ajar</span>
-                </a>
-                <a href="#" class="nav-item">
-                    <span>Pengaturan</span>
-                </a>
+                <a href="dashboard.html" class="nav-item"><span>Dashboard</span></a>
+                <a href="inventory.html" class="nav-item active"><span>Inventory Bahan Ajar</span></a>
+                <a href="#" class="nav-item"><span>Pengaturan</span></a>
             </nav>
-
             <div class="sidebar-footer">
                 <a href="#" class="nav-item logout" @click.prevent="handleLogout">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -57,6 +49,11 @@
             <div class="content">
                 <h1 class="dashboard-title">Manajemen Stok Bahan Ajar</h1>
 
+                <!-- computed: shows reactive low-stock summary -->
+                <p v-show="lowStockCount > 0" style="color:#d9534f; margin-bottom:10px;">
+                    ⚠ <span v-text="lowStockCount"></span> bahan ajar memiliki stok di bawah 10.
+                </p>
+
                 <div class="list-matakuliah">
                     <table>
                         <thead>
@@ -74,12 +71,15 @@
                         <tbody>
                             <tr v-for="(book, index) in totalBooks" :key="book.kodeBarang">
                                 <td><img :src="book.cover" alt="Cover"></td>
-                                <td>{{ book.kodeLokasi }}</td>
-                                <td><strong>{{ book.kodeBarang }}</strong></td>
-                                <td>{{ book.namaBarang }}</td>
-                                <td>{{ book.jenisBarang }}</td>
-                                <td>{{ book.edisi }}</td>
-                                <td :class="{ 'low-stock': book.stok < 10 }">{{ book.stok }} Pcs</td>
+                                <!-- v-text on table cells — cleaner than mustache inside <td> -->
+                                <td v-text="book.kodeLokasi"></td>
+                                <td><strong v-text="book.kodeBarang"></strong></td>
+                                <td v-text="book.namaBarang"></td>
+                                <td v-text="book.jenisBarang"></td>
+                                <td v-text="book.edisi"></td>
+                                <td :class="{ 'low-stock': book.stok < 10 }">
+                                    {{ book.stok }} Pcs
+                                </td>
                                 <td>
                                     <button class="edit-btn" @click="openPopup(index)">Edit</button>
                                 </td>
@@ -91,7 +91,7 @@
                 <div class="popup" :class="{ 'active': isPopupActive }" @click="handleOverlayClick">
                     <div class="edit-menu" @click.stop>
                         <h2>Edit Bahan Ajar</h2>
-                        
+
                         <div class="field">
                             <label for="kodeLokasi">Kode Lokasi</label>
                             <input type="text" id="kodeLokasi" v-model="editForm.kodeLokasi">
@@ -123,6 +123,8 @@
                             <div class="field">
                                 <label for="stok">Stok</label>
                                 <input type="number" id="stok" v-model.number="editForm.stok">
+                                <!-- v-show: warning reacts to watcher on editForm.stok -->
+                                <small v-show="stockWarning" style="color:#d9534f;">Stok hampir habis!</small>
                             </div>
                             <div class="field">
                                 <label for="cover">Cover (path)</label>
@@ -136,16 +138,15 @@
                         </div>
                     </div>
                 </div>
-
             </div>
         </main>
     </div>
 
     <style>
-        [v-cloak] { display: none; }
+        [v-cloak]  { display: none; }
         .low-stock { color: #d9534f; font-weight: bold; }
-        .btn-cancel { background: #6c757d; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; }
-        .btn-save { background: #0275d8; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; }
+        .btn-cancel { background:#6c757d; color:#fff; border:none; padding:8px 15px; border-radius:4px; cursor:pointer; }
+        .btn-save   { background:#0275d8; color:#fff; border:none; padding:8px 15px; border-radius:4px; cursor:pointer; }
     </style>
 
     <script src="js/data.js"></script>

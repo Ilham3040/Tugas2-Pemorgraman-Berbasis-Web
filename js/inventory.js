@@ -3,66 +3,56 @@ new Vue({
     data: {
         isSidebarOpen: false,
         isPopupActive: false,
-        totalBooks: [],
+        totalBooks:    [],
         selectedIndex: null,
-        // Model store representing active object mutation details
-        editForm: {
-            kodeLokasi: '',
-            kodeBarang: '',
-            namaBarang: '',
-            jenisBarang: '',
-            edisi: 0,
-            stok: 0,
-            cover: ''
+        stockWarning:  false,
+        editForm: { kodeLokasi:'', kodeBarang:'', namaBarang:'', jenisBarang:'', edisi:0, stok:0, cover:'' }
+    },
+
+    // computed: reactively counts how many books are low on stock
+    computed: {
+        lowStockCount() {
+            return this.totalBooks.filter(b => b.stok < 10).length;
         }
     },
+
+    // watch: monitors nested editForm.stok to trigger in-popup warning
+    watch: {
+        'editForm.stok'(val) {
+            this.stockWarning = val < 10;
+        },
+        isSidebarOpen(isOpen) {
+            document.body.style.overflow = isOpen ? 'hidden' : '';
+        }
+    },
+
     created() {
-        // Hydrate data attributes safely out of sessionStorage or structural data fallback definitions
-        const rawBooks = sessionStorage.getItem('books');
-        if (rawBooks) {
-            this.totalBooks = JSON.parse(rawBooks);
-        } else if (typeof books !== 'undefined') {
-            this.totalBooks = books;
-            sessionStorage.setItem('books', JSON.stringify(books));
+        const raw = sessionStorage.getItem('books');
+        if (raw) {
+            this.totalBooks = JSON.parse(raw);
         } else if (typeof dataBahanAjar !== 'undefined') {
-            // Support bindings targeting structural properties found inside native variable hooks
             this.totalBooks = dataBahanAjar;
             sessionStorage.setItem('books', JSON.stringify(dataBahanAjar));
         }
     },
+
     methods: {
-        openSidebar() {
-            this.isSidebarOpen = true;
-            document.body.style.overflow = 'hidden';
-        },
-        closeSidebar() {
-            this.isSidebarOpen = false;
-            document.body.style.overflow = '';
-        },
+        openSidebar()  { this.isSidebarOpen = true;  },
+        closeSidebar() { this.isSidebarOpen = false; },
         openPopup(index) {
             this.selectedIndex = index;
-            const chosenBook = this.totalBooks[index];
-
-            // Use spread operator to decouple input fields from mutations until 'Simpan' is confirmed
-            this.editForm = { ...chosenBook };
+            this.editForm      = { ...this.totalBooks[index] };
             this.isPopupActive = true;
         },
         closePopup() {
             this.isPopupActive = false;
             this.selectedIndex = null;
         },
-        handleOverlayClick(e) {
-            // Closes modal layout window safely when backdrop regions are selected
-            this.closePopup();
-        },
+        handleOverlayClick() { this.closePopup(); },
         saveEdit() {
             if (this.selectedIndex !== null) {
-                // Apply update changes reactively into array index collection values
                 Vue.set(this.totalBooks, this.selectedIndex, { ...this.editForm });
-
-                // Commit mutations across global web SessionStorage engine
                 sessionStorage.setItem('books', JSON.stringify(this.totalBooks));
-                
                 this.closePopup();
             }
         },
