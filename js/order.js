@@ -90,8 +90,31 @@ new Vue({
             });
 
             localStorage.setItem('books', JSON.stringify(booksToSave));
-            
             this.loadBooksLocally();
+
+            const randomNum = Math.floor(1000 + Math.random() * 9000);
+            const currentTimestamp = new Date().toISOString().replace('T', ' ').substring(0, 16);
+            const currentDateOnly = currentTimestamp.substring(0, 10);
+
+            const activeUserName = "User Pembeli"; 
+
+            const newOrderTracking = {
+                nomorDO: `202600${randomNum}`,
+                nama: activeUserName,
+                status: "Dalam Perjalanan",
+                ekspedisi: "JNE",
+                tanggalKirim: currentDateOnly,
+                paket: `PAKET-UT-${randomNum}`,
+                total: `Rp ${totalOrder * 50000}`,
+                perjalanan: [
+                    { 
+                        waktu: currentTimestamp, 
+                        keterangan: "Pesanan paket sedang diproses" 
+                    }
+                ]
+            };
+
+            this.userTracking.push(newOrderTracking);
 
             this.isSubmitting = false;
             
