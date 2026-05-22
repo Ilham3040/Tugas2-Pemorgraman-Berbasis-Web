@@ -12,10 +12,10 @@
         <div class="form-box warning-box">
             <h1 class="form-title">Sesi Aktif</h1>
             <p class="form-sub">Anda mendeteksi adanya login aktif menggunakan akun <strong>{{ userName }}</strong>.</p>
-            <p class="form-sub">Apakah anda ingin masuk ke Dashboard atau keluar dari akun saat ini?</p>
+            <p class="form-sub">Apakah anda ingin kembali atau keluar dari akun saat ini?</p>
 
             <div class="btn-group">
-                <button class="btn-secondary" @click="goToDashboard">Kembali ke Dashboard</button>
+                <button class="btn-secondary" @click="goBack">Kembali</button>
                 <button class="btn-logout" @click="forceLogout">Log Out</button>
             </div>
         </div>

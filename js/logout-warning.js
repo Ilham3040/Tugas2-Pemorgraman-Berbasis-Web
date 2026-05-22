@@ -11,9 +11,10 @@ new Vue({
         }
     },
     methods: {
-        goToDashboard() {
-            window.location.href = 'dashboard.html';
+        goBack() {
+            window.history.back(); 
         },
+
         forceLogout() {
             sessionStorage.clear();
             window.location.href = 'index.html';

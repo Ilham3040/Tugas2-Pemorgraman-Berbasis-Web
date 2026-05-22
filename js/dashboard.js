@@ -7,7 +7,7 @@ new Vue({
         userData: null
     },
 
-    // computed: builds reactive derived strings from data
+
     computed: {
         greetingHtml() {
             if (!this.userData) return '';
@@ -18,12 +18,11 @@ new Vue({
         }
     },
 
-    // watch: reacts to sidebar state changes — keeps side-effect out of methods
     watch: {
         isSidebarOpen(isOpen) {
             document.body.style.overflow = isOpen ? 'hidden' : '';
         },
-        // watch: logs session user changes (useful for debugging / future audit trail)
+
         userId(val) {
             console.log('Active session userId changed:', val);
         }

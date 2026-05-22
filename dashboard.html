@@ -16,7 +16,6 @@
 
         <aside class="sidebar" :class="{ 'open': isSidebarOpen }">
             <div class="sidebar-header">
-                <!-- v-html: renders the brand dot as real HTML markup -->
                 <span class="brand" v-html="brandHtml"></span>
                 <button class="close-btn" @click="closeSidebar">✕</button>
             </div>
@@ -54,13 +53,11 @@
                 <h1 class="dashboard-title">Dashboard</h1>
 
                 <div class="profile" v-if="userData">
-                    <!-- v-html: renders greeting with bold name tag -->
                     <h3 v-html="greetingHtml" class="greeting"></h3>
                     <div class="profile-picture">
                         <img src="assets/default_profile.jpeg" alt="Profile">
                     </div>
                     <div class="identity">
-                        <!-- v-text: replaces mustache for single-value text nodes -->
                         <h3 v-text="userData.nama"></h3>
                         <h3 v-text="userData.role"></h3>
                         <h3 v-text="userData.lokasi"></h3>

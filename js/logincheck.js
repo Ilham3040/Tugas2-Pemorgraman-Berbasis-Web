@@ -1,4 +1,5 @@
-loginStatus = sessionStorage.getItem('userId');
-if (!loginStatus) {
-    window.location.href = 'denied.html';
-}
+(function() {
+    if (!sessionStorage.getItem('userId')) {
+        window.location.href = 'denied.html';
+    }
+})();
