@@ -56,7 +56,7 @@
             <div class="content">
                 <div class="dashboard-title">
                     <h1>Pemesanan Bahan Ajar</h1>
-                    <button id="open-order">Buat pemesanan baru</button>
+                    <button id="open-order" @click="openOrderMenu">Buat pemesanan baru</button>
                 </div>
                 <div id="userTracking">
                     <div v-for="(t, index) in userTracking" :key="'track-' + index" style="margin-bottom: 20px;">
@@ -86,8 +86,7 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="bg-transparent">
+                <div class="popup-1" :class="{ 'active': isOrderMenuOpen }" @click.self="closeOrderMenu">
                     <div class="order-menu">
                         <div class="book-order">
                             <ul>
@@ -106,8 +105,7 @@
                                         <p>{{ b.jumlahDipesan }}</p>
                                         <button @click="decrementQty(idx)">-</button>
                                     </div>
-                                </li>
-                            </ul>
+                                </li> </ul>
                         </div>
 
                         <div class="checkout">
@@ -117,9 +115,8 @@
                     </div>
                 </div>
 
-                <div class="popup" :class="{ 'active': isModalActive }">
+                <div class="popup-2" :class="{ 'active': isModalActive }"  @click.self="closeModal">
                     <div class="popup-box">
-                        <button class="popup-close" @click="closeModal">✕</button>
                         <h2>Daftar Keranjang</h2>
                         
                             <ul>
@@ -137,7 +134,7 @@
                             </ul>
 
 
-                        <button class="submit-btn" style="margin-top: 15px; width: 100%; padding: 10px; border-radius: 6px; cursor: pointer;">
+                        <button class="submit-btn">
                             Kirim Pesanan
                         </button>
                     </div>

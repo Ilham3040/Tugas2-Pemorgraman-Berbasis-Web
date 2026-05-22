@@ -3,6 +3,7 @@ new Vue({
     data: {
         isSidebarOpen: false,
         isModalActive: false,
+        isOrderMenuOpen: false,
         localBooks: [],
         userTracking: [],
         selectedBookIdx: '',
@@ -73,14 +74,21 @@ new Vue({
             document.body.style.overflow = 'hidden'; 
         },
         closeSidebar() { 
-            this.isSidebarOpen = false; 
-            document.body.style.overflow = '';       
+            this.isSidebarOpen = false;        
         },
         openPopup() {
             this.isModalActive = true;
         },
         closeModal() {
             this.isModalActive = false;
+        },
+        openOrderMenu() {
+            this.isOrderMenuOpen = true;
+            
+        },
+        closeOrderMenu() {
+            this.isOrderMenuOpen = false;
+            
         },
         submitOrder() {
             if (!this.isOrderValid) return;
