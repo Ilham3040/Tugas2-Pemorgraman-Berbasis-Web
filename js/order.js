@@ -24,20 +24,16 @@ new Vue({
     },
 
     watch: {
-        orderQuantity(val) {
-            if (!this.selectedBook) return;
-            if (val <= 0) {
-                this.qtyError = true;
-                this.qtyErrorMsg = 'Jumlah harus lebih dari 0';
-            } else if (val > this.selectedBook.stok) {
-                this.qtyError = true;
-                this.qtyErrorMsg = `Stok tidak cukup! Sisa: ${this.selectedBook.stok}`;
-            } else {
-                this.qtyError = false;
-            }
+        localBooks: {
+            handler(newBooksValue) {
+                if (this.isSubmitting) return;
+
+                console.log('Menyimpan perubahan keranjang otomatis...');
+                localStorage.setItem('books', JSON.stringify(newBooksValue));
+            },
+            deep: true
         }
     },
-
     created() {
 
         this.loadBooksLocally();
@@ -80,9 +76,9 @@ new Vue({
             }, 0);
             if (totalOrder === 0) return;
 
+            this.isSubmitting = true;
 
             const booksToSave = this.localBooks.map(book => {
-                
                 const bookCopy = { ...book };
                 bookCopy.stok -= bookCopy.jumlahDipesan;
                 delete bookCopy.jumlahDipesan;
@@ -90,14 +86,18 @@ new Vue({
             });
 
             localStorage.setItem('books', JSON.stringify(booksToSave));
+            
             this.loadBooksLocally();
 
-            console.log(this.localBooks);
+            this.isSubmitting = false;
             
             alert('Pesanan Berhasil Dikirim!');
             this.closeCheckout();
-
-
+        },
+        clearOrder() {
+            for (book of this.localBooks) {
+                book.jumlahDipesan = 0;
+            }
         },
         reversedPerjalanan(arr) {
             if (!arr) return [];
@@ -112,8 +112,6 @@ new Vue({
 
             if (book.stok > book.jumlahDipesan) {
                 book.jumlahDipesan++;
-                
-                sessionStorage.setItem('books', JSON.stringify(this.localBooks));
             } else {
                 alert('Stok barang sudah habis!');
             }
@@ -125,8 +123,6 @@ new Vue({
 
             if  (book.jumlahDipesan > 0) {
                 book.jumlahDipesan--;
-                
-                sessionStorage.setItem('books', JSON.stringify(this.localBooks));
             }
         },
         loadBooksLocally() {
@@ -147,7 +143,7 @@ new Vue({
                         jumlahDipesan: 0
                     };
                 });
-                sessionStorage.setItem('books', JSON.stringify(this.localBooks));
+                localStorage.setItem('books', JSON.stringify(this.localBooks));
             }
         }
     }
