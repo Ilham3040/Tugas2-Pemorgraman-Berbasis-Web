@@ -110,31 +110,30 @@
 
                         <div class="checkout">
                             <button>Clear</button>
-                            <button @click="openPopup">Checkout</button>
+                            <button @click="openCheckout">Checkout</button>
                         </div>
                     </div>
                 </div>
 
-                <div class="popup-2" :class="{ 'active': isModalActive }"  @click.self="closeModal">
+                <div class="popup-2" :class="{ 'active': isModalActive }" @click.self="closeCheckout">
                     <div class="popup-box">
                         <h2>Daftar Keranjang</h2>
                         
-                            <ul>
-                                <li v-for="(b, idx) in localBooks" :key="'book-' + idx">
-                                    <div class="left">
-                                        <div class="book-info">
-                                            <p>{{ b.namaBarang }}</p>
-                                            <p>{{ b.kodeBarang }}</p>
-                                        </div>
+                        <ul>
+                            <li v-for="(b, idx) in localBooks" :key="'book-' + idx" v-if="b.jumlahDipesan > 0">
+                                <div class="left">
+                                    <div class="book-info">
+                                        <p>{{ b.namaBarang }}</p>
+                                        <p>{{ b.kodeBarang }}</p>
                                     </div>
-                                    <div class="right">
-                                       <p>Jumlah yang dipesan: {{ b.jumlahDipesan }}</p>
-                                    </div>
-                                </li>
-                            </ul>
+                                </div>
+                                <div class="right">
+                                <p>Jumlah yang dipesan: {{ b.jumlahDipesan }}</p>
+                                </div>
+                            </li>
+                        </ul>
 
-
-                        <button class="submit-btn">
+                        <button class="submit-btn" @click="submitOrder">
                             Kirim Pesanan
                         </button>
                     </div>

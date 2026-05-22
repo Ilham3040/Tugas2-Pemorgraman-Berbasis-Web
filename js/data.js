@@ -69,6 +69,11 @@ const dataTracking = [
   }
 ];
 
+
+if (!localStorage.getItem('books') && typeof dataBahanAjar !== 'undefined') {
+    localStorage.setItem('books', JSON.stringify(dataBahanAjar));
+}
+
 const getUserById = id => dataPengguna[id];
 
 function getTrackingByUserId(userId) {
@@ -86,7 +91,6 @@ function checkAuth(email, password) {
   sessionStorage.setItem('userRole',     data.role);
   sessionStorage.setItem('userData',     JSON.stringify(getUserById(data.userId)));
   sessionStorage.setItem('userTracking', JSON.stringify(getTrackingByUserId(data.userId)));
-  sessionStorage.setItem('books', JSON.stringify(dataBahanAjar));
 
   return true;
 }

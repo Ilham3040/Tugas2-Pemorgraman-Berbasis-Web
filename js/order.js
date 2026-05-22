@@ -39,25 +39,9 @@ new Vue({
     },
 
     created() {
-        const rawBooks = sessionStorage.getItem('books');
-        if (rawBooks) {
-            const parsedBooks = JSON.parse(rawBooks);
 
-            this.localBooks = parsedBooks.map(book => {
-                if (book.jumlahDipesan === undefined) {
-                    book.jumlahDipesan = 0;
-                }
-                return book;
-            });
-        } else if (typeof dataBahanAjar !== 'undefined') {
-            this.localBooks = dataBahanAjar.map(book => {
-                return {
-                    ...book,
-                    jumlahDipesan: 0
-                };
-            });
-            sessionStorage.setItem('books', JSON.stringify(this.localBooks));
-        }
+        this.loadBooksLocally();
+
 
         const rawTracking = sessionStorage.getItem('userTracking');
         if (rawTracking) {
@@ -76,10 +60,10 @@ new Vue({
         closeSidebar() { 
             this.isSidebarOpen = false;        
         },
-        openPopup() {
+        openCheckout() {
             this.isModalActive = true;
         },
-        closeModal() {
+        closeCheckout() {
             this.isModalActive = false;
         },
         openOrderMenu() {
@@ -91,13 +75,29 @@ new Vue({
             
         },
         submitOrder() {
-            if (!this.isOrderValid) return;
+            const totalOrder = this.localBooks.reduce((accumulator, book) => {
+                return accumulator + (book.jumlahDipesan || 0);
+            }, 0);
+            if (totalOrder === 0) return;
 
-            this.selectedBook.stok -= this.orderQuantity;
-            sessionStorage.setItem('books', JSON.stringify(this.localBooks));
+
+            const booksToSave = this.localBooks.map(book => {
+                
+                const bookCopy = { ...book };
+                bookCopy.stok -= bookCopy.jumlahDipesan;
+                delete bookCopy.jumlahDipesan;
+                return bookCopy;
+            });
+
+            localStorage.setItem('books', JSON.stringify(booksToSave));
+            this.loadBooksLocally();
+
+            console.log(this.localBooks);
             
             alert('Pesanan Berhasil Dikirim!');
-            this.closeModal();
+            this.closeCheckout();
+
+
         },
         reversedPerjalanan(arr) {
             if (!arr) return [];
@@ -110,9 +110,8 @@ new Vue({
         incrementQty(idx) {
             const book = this.localBooks[idx];
 
-            if (book.stok > 0) {
+            if (book.stok > book.jumlahDipesan) {
                 book.jumlahDipesan++;
-                book.stok--;
                 
                 sessionStorage.setItem('books', JSON.stringify(this.localBooks));
             } else {
@@ -124,10 +123,30 @@ new Vue({
             const book = this.localBooks[idx];
             
 
-            if (book.jumlahDipesan > 0) {
+            if  (book.jumlahDipesan > 0) {
                 book.jumlahDipesan--;
-                book.stok++;
                 
+                sessionStorage.setItem('books', JSON.stringify(this.localBooks));
+            }
+        },
+        loadBooksLocally() {
+            const rawBooks = localStorage.getItem('books');
+            if (rawBooks) {
+                const parsedBooks = JSON.parse(rawBooks);
+
+                this.localBooks = parsedBooks.map(book => {
+                    if (book.jumlahDipesan === undefined) {
+                        book.jumlahDipesan = 0;
+                    }
+                    return book;
+                });
+            } else if (typeof dataBahanAjar !== 'undefined') {
+                this.localBooks = dataBahanAjar.map(book => {
+                    return {
+                        ...book,
+                        jumlahDipesan: 0
+                    };
+                });
                 sessionStorage.setItem('books', JSON.stringify(this.localBooks));
             }
         }
