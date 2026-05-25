@@ -20,7 +20,7 @@
                 <input type="email" id="email" placeholder="akun@ut.ac.id"
                        v-model.trim="email"
                        :class="{ 'error-input': errors.email }">
-                <!-- v-show: error toggled frequently, element stays in DOM -->
+
                 <div class="error-msg" v-show="errors.email" v-text="errors.emailMsg"></div>
             </div>
 
@@ -35,7 +35,7 @@
 
             <a href="forgot.html" class="forgot">Lupa password?</a>
 
-            <!-- v-text replaces mustache for button label -->
+
             <button class="btn-login"
                     :class="{ 'loading': isLoading }"
                     :disabled="!isFormReady"
@@ -44,7 +44,6 @@
             </button>
         </div>
 
-        <!-- v-show: toast is toggled on/off, no need to destroy DOM node -->
         <div class="toast" v-show="toast.show" v-text="toast.message"></div>
     </div>
 
