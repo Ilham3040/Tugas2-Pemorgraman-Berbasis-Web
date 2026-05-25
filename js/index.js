@@ -19,7 +19,6 @@ new Vue({
         }
     },
 
-
     watch: {
         email(val) {
             const rx = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -48,7 +47,7 @@ new Vue({
 
             if (!rx.test(this.email))       { this.errors.email    = true; return false; }
             if (this.password.length < 6)   { this.errors.password = true; return false; }
-            if (!checkAuth(this.email, this.password)) {
+            if (!this.checkAuth(this.email, this.password)) {
                 this.errors.email    = true;
                 this.errors.password = true;
                 this.errors.emailMsg = 'Email atau password salah';
