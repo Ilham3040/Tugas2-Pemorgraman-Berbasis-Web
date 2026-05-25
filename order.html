@@ -93,12 +93,12 @@
                             <ul>
                                 <li v-for="(b, idx) in localBooks" :key="'book-' + idx">
                                     <div class="left">
-                                        <img :src="b.cover || b.image" alt="Book Cover">
+                                        <img :src="b.cover" alt="Book Cover">
                                         <div class="book-info">
-                                            <p>{{ b.namaBarang }}</p>
-                                            <p>{{ b.kodeBarang }}</p>
-                                            <p>Edisi {{ b.edisi }}</p>
-                                            <p>Stock : {{ b.stok }}</p>
+                                            <p>{{ b.judul }}</p>
+                                            <p>{{ b.kode }}</p>
+                                            <p v-html="b.catatanHTML"></p>
+                                            <p>Stock : {{ b.qty }}</p>
                                         </div>
                                     </div>
                                     <div class="right">

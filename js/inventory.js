@@ -49,18 +49,18 @@ new Vue({
         saveEdit() {
             if (this.selectedIndex !== null) {
                 Vue.set(this.totalBooks, this.selectedIndex, { ...this.editForm });
-                localStorage.setItem('inventory', JSON.stringify(this.totalBooks));
+                localStorage.setItem('books', JSON.stringify(this.totalBooks));
                 this.closePopup();
                 alert('Data bahan ajar berhasil diperbarui!');
             }
         },
         loadBooksLocally() {
-            const rawBooks = localStorage.getItem('inventory');
+            const rawBooks = localStorage.getItem('books');
             if (rawBooks) {
                 this.totalBooks = JSON.parse(rawBooks);
             } else {
-                this.totalBooks = [...this.stok];
-                localStorage.setItem('inventory', JSON.stringify(this.totalBooks));
+                this.totalBooks = [...this.dataBahanAjar];
+                localStorage.setItem('books', JSON.stringify(this.totalBooks));
             }
         },
         handleLogout() {

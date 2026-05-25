@@ -66,7 +66,7 @@ new Vue({
             this.isSubmitting = true;
             const booksToSave = this.localBooks.map(book => {
                 const bookCopy = { ...book };
-                bookCopy.stok -= bookCopy.jumlahDipesan;
+                bookCopy.qty -= bookCopy.jumlahDipesan;
                 delete bookCopy.jumlahDipesan;
                 return bookCopy;
             });
@@ -109,7 +109,7 @@ new Vue({
         },
         incrementQty(idx) {
             const book = this.localBooks[idx];
-            if (book.stok > book.jumlahDipesan) {
+            if (book.qty > book.jumlahDipesan) {
                 book.jumlahDipesan++;
             } else {
                 alert('Stok barang sudah habis!');
