@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset=\"UTF-8\">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pemesanan Bahan Ajar</title>
     <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
@@ -11,6 +11,7 @@
 <body>
     <script src="js/logincheck.js"></script>
     <script src="js/nonadmincheck.js"></script>
+    <script src="js/newdata.js"></script>
 
     <div id="app" v-cloak>
         <div class="overlay" :class="{ 'active': isSidebarOpen }" @click="closeSidebar"></div>
@@ -105,7 +106,15 @@
                                         <p>{{ b.jumlahDipesan }}</p>
                                         <button @click="decrementQty(idx)">-</button>
                                     </div>
-                                </li> </ul>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="pengiriman-select">
+                            <label>Jenis Pengiriman</label>
+                            <select v-model="selectedPengiriman">
+                                <option v-for="p in pengirimanList" :key="p.kode" :value="p.kode">{{ p.nama }}</option>
+                            </select>
                         </div>
 
                         <div class="checkout">
@@ -118,7 +127,7 @@
                 <div class="popup-2" :class="{ 'active': isModalActive }" @click.self="closeCheckout">
                     <div class="popup-box">
                         <h2>Daftar Keranjang</h2>
-                        
+
                         <ul>
                             <li v-for="(b, idx) in localBooks" :key="'book-' + idx" v-if="b.jumlahDipesan > 0">
                                 <div class="left">
@@ -128,10 +137,14 @@
                                     </div>
                                 </div>
                                 <div class="right">
-                                <p>Jumlah yang dipesan: {{ b.jumlahDipesan }}</p>
+                                    <p>Jumlah yang dipesan: {{ b.jumlahDipesan }}</p>
                                 </div>
                             </li>
                         </ul>
+
+                        <p style="margin: 10px 0; font-size: 0.9em; color: #555;">
+                            Pengiriman: {{ (pengirimanList.find(p => p.kode === selectedPengiriman) || {}).nama }}
+                        </p>
 
                         <button class="submit-btn" @click="submitOrder">
                             Kirim Pesanan
@@ -143,9 +156,6 @@
         </main>
     </div>
 
-    <!-- <style>[v-cloak] { display: none; }</style> -->
-    <script src="js/data.js"></script>
-    
     <script src="js/order.js"></script>
 </body>
 </html>

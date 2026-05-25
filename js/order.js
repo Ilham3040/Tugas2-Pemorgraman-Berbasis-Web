@@ -6,38 +6,30 @@ new Vue({
         isOrderMenuOpen: false,
         localBooks: [],
         userTracking: [],
+        selectedPengiriman: 'REG',
         selectedBookIdx: '',
         selectedBook: null,
         orderQuantity: 0,
         qtyError: false,
         qtyErrorMsg: ''
     },
-
     watch: {
         localBooks: {
             handler(newBooksValue) {
                 if (this.isSubmitting) return;
-
-                console.log('Menyimpan perubahan keranjang otomatis...');
                 localStorage.setItem('books', JSON.stringify(newBooksValue));
             },
             deep: true
         },
         userTracking: {
             handler(newUserTrackingValue) {
-                console.log('Ada perubahan pada data tracking user! Memperbarui localStorage...');
-                
                 const rawTracking = localStorage.getItem('tracking');
                 if (!rawTracking) return;
-
                 const allUsersTracking = JSON.parse(rawTracking);
                 const currentUserId = Number(sessionStorage.getItem('userId'));
-
                 const userIdx = allUsersTracking.findIndex(u => u.userId === currentUserId);
-
                 if (userIdx !== -1) {
                     allUsersTracking[userIdx].datas = newUserTrackingValue;
-
                     localStorage.setItem('tracking', JSON.stringify(allUsersTracking));
                 }
             },
@@ -45,20 +37,16 @@ new Vue({
         }
     },
     created() {
-
         this.loadBooksLocally();
-
         this.loadTrackingLocally();
-
     },
-
     methods: {
-        openSidebar() { 
-            this.isSidebarOpen = true;  
-            document.body.style.overflow = 'hidden'; 
+        openSidebar() {
+            this.isSidebarOpen = true;
+            document.body.style.overflow = 'hidden';
         },
-        closeSidebar() { 
-            this.isSidebarOpen = false;        
+        closeSidebar() {
+            this.isSidebarOpen = false;
         },
         openCheckout() {
             this.isModalActive = true;
@@ -68,61 +56,46 @@ new Vue({
         },
         openOrderMenu() {
             this.isOrderMenuOpen = true;
-            
         },
         closeOrderMenu() {
             this.isOrderMenuOpen = false;
-            
         },
         submitOrder() {
-            const totalOrder = this.localBooks.reduce((accumulator, book) => {
-                return accumulator + (book.jumlahDipesan || 0);
-            }, 0);
+            const totalOrder = this.localBooks.reduce((acc, book) => acc + (book.jumlahDipesan || 0), 0);
             if (totalOrder === 0) return;
-
             this.isSubmitting = true;
-
             const booksToSave = this.localBooks.map(book => {
                 const bookCopy = { ...book };
                 bookCopy.stok -= bookCopy.jumlahDipesan;
                 delete bookCopy.jumlahDipesan;
                 return bookCopy;
             });
-
             localStorage.setItem('books', JSON.stringify(booksToSave));
             this.loadBooksLocally();
-
             const randomNum = Math.floor(1000 + Math.random() * 9000);
             const currentTimestamp = new Date().toISOString().replace('T', ' ').substring(0, 16);
             const currentDateOnly = currentTimestamp.substring(0, 10);
-
-            const activeUserName = "User Pembeli"; 
-
+            const userData = JSON.parse(sessionStorage.getItem('userData') || '{}');
+            const pengiriman = this.pengirimanList.find(p => p.kode === this.selectedPengiriman);
             const newOrderTracking = {
                 nomorDO: `202600${randomNum}`,
-                nama: activeUserName,
-                status: "Dalam Perjalanan",
-                ekspedisi: "JNE",
+                nama: userData.nama || 'User Pembeli',
+                status: 'Dalam Perjalanan',
+                ekspedisi: pengiriman ? pengiriman.nama : 'Reguler',
                 tanggalKirim: currentDateOnly,
                 paket: `PAKET-UT-${randomNum}`,
                 total: `Rp ${totalOrder * 50000}`,
                 perjalanan: [
-                    { 
-                        waktu: currentTimestamp, 
-                        keterangan: "Pesanan paket sedang diproses" 
-                    }
+                    { waktu: currentTimestamp, keterangan: 'Pesanan paket sedang diproses' }
                 ]
             };
-
             this.userTracking.push(newOrderTracking);
-
             this.isSubmitting = false;
-            
             alert('Pesanan Berhasil Dikirim!');
             this.closeCheckout();
         },
         clearOrder() {
-            for (book of this.localBooks) {
+            for (const book of this.localBooks) {
                 book.jumlahDipesan = 0;
             }
         },
@@ -136,19 +109,15 @@ new Vue({
         },
         incrementQty(idx) {
             const book = this.localBooks[idx];
-
             if (book.stok > book.jumlahDipesan) {
                 book.jumlahDipesan++;
             } else {
                 alert('Stok barang sudah habis!');
             }
         },
-
         decrementQty(idx) {
             const book = this.localBooks[idx];
-            
-
-            if  (book.jumlahDipesan > 0) {
+            if (book.jumlahDipesan > 0) {
                 book.jumlahDipesan--;
             }
         },
@@ -156,39 +125,25 @@ new Vue({
             const rawBooks = localStorage.getItem('books');
             if (rawBooks) {
                 const parsedBooks = JSON.parse(rawBooks);
-
                 this.localBooks = parsedBooks.map(book => {
-                    if (book.jumlahDipesan === undefined) {
-                        book.jumlahDipesan = 0;
-                    }
+                    if (book.jumlahDipesan === undefined) book.jumlahDipesan = 0;
                     return book;
                 });
-            } else if (typeof dataBahanAjar !== 'undefined') {
-                this.localBooks = dataBahanAjar.map(book => {
-                    return {
-                        ...book,
-                        jumlahDipesan: 0
-                    };
-                });
+            } else {
+                this.localBooks = this.dataBahanAjar.map(book => ({ ...book, jumlahDipesan: 0 }));
                 localStorage.setItem('books', JSON.stringify(this.localBooks));
             }
         },
-
         loadTrackingLocally() {
             const rawTracking = localStorage.getItem('tracking');
-            
             if (rawTracking) {
-                const dataTracking = JSON.parse(rawTracking);
-                
+                const trackingData = JSON.parse(rawTracking);
                 const currentUserId = Number(sessionStorage.getItem('userId'));
-                const activeUser = dataTracking.find(u => u.userId === currentUserId);
-                
+                const activeUser = trackingData.find(u => u.userId === currentUserId);
                 this.userTracking = activeUser ? activeUser.datas : [];
-                
-                console.log(this.userTracking);
-            } else if (typeof dataTracking !== 'undefined') {
-                this.userTracking = dataTracking; // Catatan: Baris ini mengambil seluruh data dummy awal
-                localStorage.setItem('tracking', JSON.stringify(dataTracking));
+            } else {
+                this.userTracking = [];
+                localStorage.setItem('tracking', JSON.stringify(this.dataTracking));
             }
         }
     }
